@@ -129,13 +129,7 @@ class FloatingPanelLayoutAdapter {
 
     var layout: FloatingPanelLayout
 
-    var safeAreaInsets: UIEdgeInsets = .zero {
-        didSet {
-            if oldValue != safeAreaInsets {
-                updateHeight()
-            }
-        }
-    }
+    var safeAreaInsets: UIEdgeInsets = .zero
 
     private var heightBuffer: CGFloat = 88.0 // For bounce
     private var fixedConstraints: [NSLayoutConstraint] = []
@@ -286,13 +280,6 @@ class FloatingPanelLayoutAdapter {
     // It must be called in FloatingPanelController.traitCollectionDidChange(_:)
     func updateHeight() {
         guard let vc = vc else { return }
-        defer {
-            UIView.performWithoutAnimation {
-                surfaceView.superview!.layoutIfNeeded()
-            }
-        }
-
-        NSLayoutConstraint.deactivate(heightConstraints)
 
         let height: CGFloat
         if layout is FloatingPanelIntrinsicLayout {
@@ -306,11 +293,14 @@ class FloatingPanelLayoutAdapter {
             height = vc.view.bounds.height - (safeAreaInsets.top + fullInset)
         }
 
+        guard heightConstraints.first?.constant != height else { return }
+
+        NSLayoutConstraint.deactivate(heightConstraints)
         heightConstraints = [
             surfaceView.heightAnchor.constraint(equalToConstant: height)
         ]
         NSLayoutConstraint.activate(heightConstraints)
-        surfaceView.set(bottomOverflow: heightBuffer + layout.topInteractionBuffer)
+        surfaceView.bottomOverflow = heightBuffer + layout.topInteractionBuffer
 
         if layout is FloatingPanelIntrinsicLayout {
             NSLayoutConstraint.deactivate(fullConstraints)
@@ -319,6 +309,10 @@ class FloatingPanelLayoutAdapter {
                                                  constant: -fullInset),
             ]
             NSLayoutConstraint.activate(fullConstraints)
+        }
+
+        UIView.performWithoutAnimation {
+            surfaceView.superview!.layoutIfNeeded()
         }
     }
 
@@ -340,16 +334,12 @@ class FloatingPanelLayoutAdapter {
         NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints + offConstraints)
         switch state {
         case .full:
-            NSLayoutConstraint.deactivate(halfConstraints + tipConstraints + offConstraints)
             NSLayoutConstraint.activate(fullConstraints)
         case .half:
-            NSLayoutConstraint.deactivate(fullConstraints + tipConstraints + offConstraints)
             NSLayoutConstraint.activate(halfConstraints)
         case .tip:
-            NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + offConstraints)
             NSLayoutConstraint.activate(tipConstraints)
         case .hidden:
-            NSLayoutConstraint.deactivate(fullConstraints + halfConstraints + tipConstraints)
             NSLayoutConstraint.activate(offConstraints)
         }
     }

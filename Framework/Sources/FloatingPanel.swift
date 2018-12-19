@@ -26,11 +26,6 @@ class FloatingPanel: NSObject, UIGestureRecognizerDelegate, UIScrollViewDelegate
     }
     weak var userScrollViewDelegate: UIScrollViewDelegate?
 
-    var safeAreaInsets: UIEdgeInsets! {
-        get { return layoutAdapter.safeAreaInsets }
-        set { layoutAdapter.safeAreaInsets = newValue }
-    }
-
     unowned let viewcontroller: FloatingPanelController
 
     private(set) var state: FloatingPanelPosition = .hidden {

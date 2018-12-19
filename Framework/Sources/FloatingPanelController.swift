@@ -239,11 +239,8 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         // preserve the current content offset
         let contentOffset = scrollView?.contentOffset
 
-        floatingPanel.safeAreaInsets = safeAreaInsets
-        if forceHeigtUpdate {
-            // Force update
-            floatingPanel.layoutAdapter.updateHeight()
-        }
+        floatingPanel.layoutAdapter.safeAreaInsets = safeAreaInsets
+        floatingPanel.layoutAdapter.updateHeight()
 
         scrollView?.contentOffset = contentOffset ?? .zero
 
@@ -254,6 +251,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         default:
             break
         }
+
         floatingPanel.layoutAdapter.checkLayoutConsistance()
     }
 

@@ -25,7 +25,7 @@ public class FloatingPanelSurfaceView: UIView {
     public var contentView: UIView!
 
     private var color: UIColor? = .white { didSet { setNeedsLayout() } }
-    private var bottomOverflow: CGFloat = 0.0 // Must not call setNeedsLayout()
+    var bottomOverflow: CGFloat = 0.0 // Must not call setNeedsLayout()
 
     public override var backgroundColor: UIColor? {
         get { return color }
@@ -156,13 +156,6 @@ public class FloatingPanelSurfaceView: UIView {
             // Instead, a user can mask the content view manually in an application.
         }
     }
-
-    func set(bottomOverflow: CGFloat) {
-        self.bottomOverflow = bottomOverflow
-        updateLayers()
-        updateContentViewMask()
-    }
-
 
     func add(childView: UIView) {
         contentView.addSubview(childView)
