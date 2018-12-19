@@ -381,7 +381,52 @@ class DebugTextViewController: UIViewController, UITextViewDelegate {
     }
 }
 
-class DebugTableViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class InspectableViewController: UIViewController {
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        print(">>> Content View: viewWillLayoutSubviews", layoutInsets)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        print(">>> Content View: viewDidLayoutSubviews", layoutInsets)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print(">>> Content View: viewWillAppear", layoutInsets)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print(">>> Content View: viewDidAppear", view.bounds, layoutInsets)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print(">>> Content View: viewWillDisappear")
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print(">>> Content View: viewDidDisappear")
+    }
+
+    override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        print(">>> Content View: willMove(toParent: \(String(describing: parent))")
+    }
+
+    override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+        print(">>> Content View: didMove(toParent: \(String(describing: parent))")
+    }
+    public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+        print(">>> Content View: willTransition(to: \(newCollection), with: \(coordinator))", layoutInsets)
+    }
+}
+
+class DebugTableViewController: InspectableViewController, UITableViewDataSource, UITableViewDelegate {
     weak var tableView: UITableView!
     var items: [String] = []
     var itemHeight: CGFloat = 66.0
@@ -500,50 +545,6 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
         (self.parent as! FloatingPanelController).removePanelFromParent(animated: true, completion: nil)
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        //print("Content View: viewWillLayoutSubviews")
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        //print("Content View: viewDidLayoutSubviews")
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        print("Content View: viewWillAppear")
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        print("Content View: viewDidAppear", view.bounds)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        print("Content View: viewWillDisappear")
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        print("Content View: viewDidDisappear")
-    }
-
-    override func willMove(toParent parent: UIViewController?) {
-        super.willMove(toParent: parent)
-        print("Content View: willMove(toParent: \(String(describing: parent))")
-    }
-
-    override func didMove(toParent parent: UIViewController?) {
-        super.didMove(toParent: parent)
-        print("Content View: didMove(toParent: \(String(describing: parent))")
-    }
-
-    public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
-        print("Content View: willTransition(to: \(newCollection), with: \(coordinator))")
-    }
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
@@ -576,7 +577,7 @@ class DebugTableViewController: UIViewController, UITableViewDataSource, UITable
     }
 }
 
-class DetailViewController: UIViewController {
+class DetailViewController: InspectableViewController {
     @IBOutlet weak var closeButton: UIButton!
     @IBAction func close(sender: UIButton) {
         // (self.parent as? FloatingPanelController)?.removePanelFromParent(animated: true, completion: nil)
