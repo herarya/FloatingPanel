@@ -175,8 +175,6 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
             view.frame.size = size
             view.layoutIfNeeded()
         }
-
-        floatingPanel.layoutAdapter.checkLayoutConsistance()
     }
 
     public override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -190,9 +188,11 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
 
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
         guard previousTraitCollection != traitCollection else { return }
 
-        self.update(safeAreaInsets: layoutInsets)
+        // `view.frame.height` has an appropriate value on changed trait collection.
+        self.update(safeAreaInsets: layoutInsets, forceHeigtUpdate: true)
     }
 
     public override func viewDidAppear(_ animated: Bool) {
@@ -235,11 +235,15 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         return self.delegate?.floatingPanel(self, behaviorFor: traitCollection) ?? FloatingPanelDefaultBehavior()
     }
 
-    private func update(safeAreaInsets: UIEdgeInsets) {
+    private func update(safeAreaInsets: UIEdgeInsets, forceHeigtUpdate: Bool = false) {
         // preserve the current content offset
         let contentOffset = scrollView?.contentOffset
 
         floatingPanel.safeAreaInsets = safeAreaInsets
+        if forceHeigtUpdate {
+            // Force update
+            floatingPanel.layoutAdapter.updateHeight()
+        }
 
         scrollView?.contentOffset = contentOffset ?? .zero
 
@@ -250,6 +254,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         default:
             break
         }
+        floatingPanel.layoutAdapter.checkLayoutConsistance()
     }
 
     private func updateLayout(for traitCollection: UITraitCollection) {
