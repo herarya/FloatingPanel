@@ -295,6 +295,7 @@ public class FloatingPanelController: UIViewController, UIScrollViewDelegate, UI
         precondition((parent is UITableViewController) == false, "UITableViewController should not be the parent because the view is a table view so that a floating panel doens't work well")
         precondition((parent is UICollectionViewController) == false, "UICollectionViewController should not be the parent because the view is a collection view so that a floating panel doens't work well")
 
+        view.frame = parent.view.bounds // Needed for a correct safe area configuration
         if let belowView = belowView {
             parent.view.insertSubview(self.view, belowSubview: belowView)
         } else {

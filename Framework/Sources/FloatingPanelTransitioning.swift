@@ -46,6 +46,7 @@ class FloatingPanelPresentationController: UIPresentationController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackdrop(tapGesture:)))
         fpc.backdropView.addGestureRecognizer(tapGesture)
 
+        fpView.frame = containerView.bounds // Needed for a correct safe area configuration
         containerView.addSubview(fpView)
         fpView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
